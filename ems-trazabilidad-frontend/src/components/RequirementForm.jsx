@@ -1,9 +1,11 @@
+
 import { useState } from 'react';
 import { createRequirement } from '../services/requirementService';
 
 const validStatuses = ['pending', 'approved', 'rejected'];
 
 function RequirementForm({ onRequirementCreated }) {
+
   const [formData, setFormData] = useState({
     projectId: '',
     title: '',
@@ -22,6 +24,7 @@ function RequirementForm({ onRequirementCreated }) {
   };
 
   const validateForm = () => {
+
     if (!formData.projectId) {
       return 'El projectId es obligatorio';
     }
@@ -52,6 +55,7 @@ function RequirementForm({ onRequirementCreated }) {
     }
 
     try {
+
       setLoading(true);
       setError('');
 
@@ -74,55 +78,80 @@ function RequirementForm({ onRequirementCreated }) {
       }
 
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        'Error creando requisito'
-      );
+      setError(err.response?.data?.message || 'Error creando requisito');
     } finally {
-      setLoading(false);
+      setLoading(false);   // ← debe estar aquí, no dentro del try
     }
   };
 
   return (
-    <div className="card">
-      <h2>Crear Requisito</h2>
 
-      <form onSubmit={handleSubmit}>
+    <section className="card">
 
+      {/* HEADER */}
+      <div className="card-header">
+
+        <div className="card-header-eyebrow">
+          <span className="card-header-step">01</span>
+          <span className="card-header-divider"></span>
+          <span>Nuevo Registro</span>
+        </div>
+
+        <h2 className="card-title">
+          Crear Requisito
+        </h2>
+
+        <p className="card-description">
+          Registra requisitos funcionales y técnicos del proyecto
+          para mantener trazabilidad completa entre alcance,
+          desarrollo, validaciones y pruebas de calidad dentro
+          del ecosistema EMS.
+        </p>
+
+      </div>
+
+      {/* SEPARADOR VISUAL */}
+      <div className="form-section-divider">
+        <span className="form-section-label">Identificación del Proyecto</span>
+      </div>
+
+      {/* FORMULARIO */}
+      <form
+        className="form-grid"
+        onSubmit={handleSubmit}
+      >
+
+        {/* PROJECT ID */}
         <div className="form-group">
-          <label>Project ID</label>
+
+          <label>
+            <span className="label-icon">🗂</span>
+            ID del Proyecto
+          </label>
+
           <input
             type="number"
             name="projectId"
             value={formData.projectId}
             onChange={handleChange}
-            placeholder="1"
+            placeholder="Ejemplo: 1"
           />
+
+          <p className="input-helper">
+            Identificador numérico del proyecto creado
+            desde el módulo principal de integración EMS.
+          </p>
+
         </div>
 
+        {/* ESTADO */}
         <div className="form-group">
-          <label>Título</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Login"
-          />
-        </div>
 
-        <div className="form-group">
-          <label>Descripción</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="El sistema debe permitir login"
-          />
-        </div>
+          <label>
+            <span className="label-icon">🔖</span>
+            Estado del Requisito
+          </label>
 
-        <div className="form-group">
-          <label>Estado</label>
           <select
             name="status"
             value={formData.status}
@@ -132,18 +161,86 @@ function RequirementForm({ onRequirementCreated }) {
             <option value="approved">approved</option>
             <option value="rejected">rejected</option>
           </select>
+
+          <p className="input-helper">
+            Define el estado actual de validación
+            y aprobación del requisito.
+          </p>
+
         </div>
 
+        {/* SEPARADOR VISUAL */}
+        <div className="form-section-divider full-width">
+          <span className="form-section-label">Detalle del Requisito</span>
+        </div>
+
+        {/* TITULO */}
+        <div className="form-group full-width">
+
+          <label>
+            <span className="label-icon">✏️</span>
+            Título del Requisito
+          </label>
+
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Ejemplo: Acceso Seguro al Sistema"
+          />
+
+          <p className="input-helper">
+            Utiliza un nombre claro y específico para
+            facilitar la trazabilidad entre módulos.
+          </p>
+
+        </div>
+
+        {/* DESCRIPCION */}
+        <div className="form-group full-width">
+
+          <label>
+            <span className="label-icon">📋</span>
+            Descripción Funcional
+          </label>
+
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Describe el comportamiento esperado del requisito, validaciones necesarias, restricciones y criterios funcionales."
+          />
+
+          <p className="input-helper">
+            Esta descripción será utilizada para
+            relacionar pruebas, validaciones de calidad
+            y futuras auditorías de alcance.
+          </p>
+
+        </div>
+
+        {/* ERROR */}
         {error && (
-          <p className="error-message">{error}</p>
+          <p className="error-message">
+            ⚠️ {error}
+          </p>
         )}
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar'}
+        {/* BOTON */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="primary-button"
+        >
+          {loading
+            ? '⏳ Guardando requisito...'
+            : '💾 Guardar Requisito'}
         </button>
 
       </form>
-    </div>
+
+    </section>
   );
 }
 
